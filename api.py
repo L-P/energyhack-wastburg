@@ -7,7 +7,6 @@ class EnergyApi:
   password = 'x52jSh6Ur3S'
 
   def request(self, params={}):
-    print self.url
     payload = {
       "jsonrpc":"2.0",
       "method":"energy",
@@ -15,4 +14,5 @@ class EnergyApi:
       "id":"energyhack007",
     }
     self.req = requests.post(self.url, auth=(self.login, self.password), verify=False, data = json.dumps(payload))
-    return self.req.json()
+    data = self.req.json()
+    return data['result']
