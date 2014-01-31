@@ -1,17 +1,16 @@
-import requests
+import pprint
+from api import EnergyApi
 
-class EnergyApi:
-  url = 'https://camel.steria.fr:4043/CamelWebService/energy'
-  login = 'NRJHack'
-  password = 'x52jSh6Ur3S'
-
-  def __init__(self):
-    print self.url
-    self.req = requests.get(self.url, auth=(self.login, self.password))
-
-  def load(self):
-    print 'Load'
+def test():
+  ea = EnergyApi()
+  params = {
+    "prog":"CERGY01",
+    "ctx":"GLOBAL",
+    "ind":0,
+    "gran":"LAST"
+  }
+  data = ea.request(params)
+  pprint.pprint(data)
 
 if __name__ == '__main__':
-  ea = EnergyApi()
-
+  test()
