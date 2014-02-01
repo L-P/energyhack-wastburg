@@ -4,7 +4,6 @@ from wastburg.views import *
 
 urlpatterns = patterns('',
   url(r'^/?$', HomeView.as_view(), name="home"),
-  url(r'^lot/(?P<building>\w+)/(?P<lot>\w+)/?$', LotView.as_view(), name="lot"),
 
   # User management
   url(r'^login/?$', 'django.contrib.auth.views.login', {'template_name': 'users/login.html'}),

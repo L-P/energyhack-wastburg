@@ -1,3 +1,17 @@
+body {
+  padding-top: 70px;
+}
+
+ul.nav {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+ul.nav li.user {
+  color: white;
+  margin-top: 10px;
+}
+
 #form-signin {
   max-width: 330px;
   padding: 15px;
