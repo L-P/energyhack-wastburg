@@ -10,21 +10,31 @@
 </ul>
 
 
-<table>
+<table border=1>
 <tr>
-  <th>day</th>
-  <th>temper</th>
-  <th>vecs</th>
-  <th>elec</th>
-  <th>vef</th>
+  <th>Date</th>
+  <th>Température</th>
+  <th>Eau chaude</th>
+  <th>Eau froide</th>
+  <th>Conso Elec.</th>
+  <th>Dju</th>
+  <th>Dju du lot</th>
 </tr>
 {% for day in days %}
 <tr>
-  <td>{{ day.day|default:'' }}</td>
-  <td>{{ day.temper|default:''}}</td>
-  <td>{{ day.vecs|default:'' }}</td>
-  <td>{{ day.elec|default:'' }}</td>
-  <td>{{ day.vef|default:'' }}</td>
+  <td>{{ day.day|default('') }}</td>
+  <td>{{ day.temper|default('')}}</td>
+  <td>{{ day.vecs|default('') }}</td>
+  <td>{{ day.vef|default('') }}</td>
+  <td>{{ day.elec|default('') }}</td>
+  {% with djus[day.day] as dju %}
+  {% if dju %}
+  <td>{{ dju.dju }}</td>
+  <td>{{ lot.calc_my_dju(dju.dju) }}</td>
+  {% else %}
+  <td colspan="2">-</td>
+  {% endif %}
+  {% endwith %}
 </tr>
 {% endfor %}
 </table>

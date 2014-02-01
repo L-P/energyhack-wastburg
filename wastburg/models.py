@@ -25,6 +25,9 @@ class Lot(models.Model):
   def __unicode__(self):
     return '%s/%s' % (self.building, self.name)
 
+  def calc_my_dju(self, dju_base):
+    return 33.7 * dju_base * self.surface
+
 class EnergyDay(models.Model):
   lot = models.ForeignKey(Lot, related_name='days')
   day = models.DateField()
@@ -37,3 +40,7 @@ class EnergyDay(models.Model):
 
   class Meta:
     unique_together = (('lot', 'day'),)
+
+class DjuDay(models.Model):
+  day = models.DateField(unique=True)
+  dju = models.FloatField()

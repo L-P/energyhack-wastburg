@@ -4,8 +4,8 @@
 {% for build in buildings %}
 <h1>{{ build.name }}</h1>
 <ul>
-  {% for lot in build.lots.all %}
-    <li><a href="{% url 'lot' build.name lot.name %}">{{ lot.name }}</a></li>
+  {% for lot in build.lots.all() %}
+    <li><a href="{% url 'lot' build.name, lot.name %}">{{ lot.name }}</a></li>
   {% endfor %}
 </ul>
 {% endfor %}
