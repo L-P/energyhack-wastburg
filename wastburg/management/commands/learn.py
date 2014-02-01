@@ -1,9 +1,12 @@
 from django.core.management.base import BaseCommand
-from matplotlib import pyplot
+from sklearn.externals import joblib
 from sklearn.svm import SVR
-from wastburg.models import EnergyDay, DjuDay, Lot
+from wastburg.models import EnergyDay, DjuDay
 import math
 import numpy as np
+
+def doy_from_date(date):
+    return date.timetuple().tm_yday
 
 def is_float_empty(var):
     return not isinstance(var, float) or math.isnan(var)
@@ -13,35 +16,34 @@ class Command(BaseCommand):
     COST_KWH = 0.1372
 
     def handle(self, *args, **options):
-        lot = "A201"
-        time, data, target = self.get_lot_training_set(lot)
-        self.plot(time, data, target, lot)
+        cost_clf, temp_clf = self.get_global_cost_temp_profile()
+        joblib.dump(cost_clf, "data/cost/dump")
+        joblib.dump(temp_clf, "data/temp/dump")
+
+        dju_clf = self.get_global_dju_profile()
+        joblib.dump(dju_clf, "data/dju/dump")
 
 
-    def plot(self, time, data, target, title):
-        clf = SVR(probability=True)
-        clf.fit(data, target)
-
-        svr = clf.predict(data)
-
-        pyplot.hold(True)
-        pyplot.plot_date(time, target, '-', c="g", xdate=True, ydate=False, label="conso")
-        pyplot.plot_date(time, svr, '-', c="b", xdate=True, ydate=False, label="SVR")
-
-        pyplot.xlabel("day")
-        pyplot.ylabel("conso")
-        pyplot.title(title)
-        pyplot.legend()
-        pyplot.show()
-
-
-    def get_lot_training_set(self, lot_name):
+    def get_global_dju_profile(self):
         data = []
         target = []
-        time = []
-        lot = Lot.objects.get(name=lot_name)
 
-        for eday in EnergyDay.objects.filter(lot=lot):
+        for dju in DjuDay.objects.all():
+            data.append(np.array([doy_from_date(dju.day)]))
+            target.append(dju.dju)
+
+        clf = SVR(probability=True)
+        clf.fit(data, target)
+        return clf
+
+
+    def get_global_cost_temp_profile(self):
+        cost_data = []
+        cost_target = []
+        temp_data = []
+        temp_target = []
+
+        for eday in EnergyDay.objects.all():
             if is_float_empty(eday.temper) or is_float_empty(eday.elec):
                 continue
 
@@ -51,13 +53,24 @@ class Command(BaseCommand):
             except:
                 continue
 
-            cost = (eday.elec + (lot.DJU_TO_KWH * dju)) * self.COST_KWH
-            data.append(np.array([
+            cost = (eday.elec + (eday.lot.DJU_TO_KWH * dju)) * self.COST_KWH
+            doy = doy_from_date(eday.day)
+            cost_data.append(np.array([
+                doy,
                 eday.temper,
-                lot.surface,
+                eday.lot.surface,
                 dju
             ]))
-            target.append(float(cost))
-            time.append(eday.day)
+            cost_target.append(cost)
 
-        return (np.array(time), np.array(data), np.array(target))
+            temp_data.append(np.array([
+                doy,
+                dju
+            ]))
+            temp_target.append(eday.temper)
+
+        cost_clf = SVR(probability=True)
+        cost_clf.fit(cost_data, cost_target)
+        temp_clf = SVR(probability=True)
+        temp_clf.fit(temp_data, temp_target)
+        return (cost_clf, temp_clf)
