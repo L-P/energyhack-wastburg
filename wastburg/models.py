@@ -1,4 +1,5 @@
 from django.db import models
+from licence4.settings import KWH_TO_EUROS, DJU_TO_KWH
 
 class Building(models.Model):
   name = models.CharField(max_length=50, unique=True)
@@ -25,8 +26,9 @@ class Lot(models.Model):
   def __unicode__(self):
     return '%s/%s' % (self.building, self.name)
 
-  def calc_my_dju(self, dju_base):
-    return 33.7 * dju_base * self.surface
+  def calc_mean_cost(self):
+    dju_total = sum([d.dju for d in DjuDay.objects.filter(day__year=2013)])
+    return dju_total * DJU_TO_KWH * self.surface * KWH_TO_EUROS / 1000.0
 
 class EnergyDay(models.Model):
   lot = models.ForeignKey(Lot, related_name='days')

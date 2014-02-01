@@ -7,6 +7,7 @@
   <li>Prix : {{ lot.price }} euros</li>
   <li>Pièces : {{ lot.rooms }}</li>
   <li>Surface : {{ lot.surface}} m2</li>
+  <li>Cout optimal : {{ lot.calc_mean_cost() }}</li>
 </ul>
 
 
@@ -18,7 +19,6 @@
   <th>Eau froide</th>
   <th>Conso Elec.</th>
   <th>Dju</th>
-  <th>Dju du lot</th>
 </tr>
 {% for day in days %}
 <tr>
@@ -30,9 +30,8 @@
   {% with djus[day.day] as dju %}
   {% if dju %}
   <td>{{ dju.dju }}</td>
-  <td>{{ lot.calc_my_dju(dju.dju) }}</td>
   {% else %}
-  <td colspan="2">-</td>
+  <td>-</td>
   {% endif %}
   {% endwith %}
 </tr>

@@ -28,6 +28,6 @@ class Command(BaseCommand):
     floor, _ = BuildingFloor.objects.get_or_create(building=build, floor=floor_index)
     lot.rooms = int(data[2][1])
     lot.floor = floor
-    lot.size = float(data[5])
+    lot.surface = float(data[5])
     lot.price = float(data[10])
     lot.save()

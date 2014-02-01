@@ -92,6 +92,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Energy Constants
+DJU_TO_KWH = 33.7
+KWH_TO_EUROS = 0.13
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
