@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ lot.name }} de {{ lot.building.name }}</h1>
+
+<table>
+<tr>
+  <th>day</th>
+  <th>temper</th>
+  <th>vecs</th>
+  <th>elec</th>
+  <th>vef</th>
+</tr>
+{% for day in days %}
+<tr>
+  <td>{{ day.day|default:'' }}</td>
+  <td>{{ day.temper|default:''}}</td>
+  <td>{{ day.vecs|default:'' }}</td>
+  <td>{{ day.elec|default:'' }}</td>
+  <td>{{ day.vef|default:'' }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

@@ -15,8 +15,8 @@ class Command(BaseCommand):
     # Get min start day
     start = date(year=2013, month=1, day=1)
     agg = EnergyDay.objects.all().aggregate(Max('day'))
-    if 'day__min' in agg:
-      start = agg['day__min']
+    if 'day__max' in agg and agg['day__max']:
+      start = agg['day__max']
 
     # Always end today !
     end = date.today()

@@ -8,29 +8,21 @@ class Building(models.Model):
     return '%s/%s' % (self.prog, self.name)
 
 class Lot(models.Model):
-  building = models.ForeignKey(Building)
+  building = models.ForeignKey(Building, related_name='lots')
   name = models.CharField(max_length=50, unique=True)
 
   def __unicode__(self):
     return '%s/%s' % (self.building, self.name)
 
 class EnergyDay(models.Model):
-  lot = models.ForeignKey(Lot)
+  lot = models.ForeignKey(Lot, related_name='days')
   day = models.DateField()
 
   # Energy data
-  chauffage = models.FloatField(blank=True, null=True)
-  ecs = models.FloatField(blank=True, null=True)
-  refroid = models.FloatField(blank=True, null=True)
-  ventil = models.FloatField(blank=True, null=True)
-  ecl = models.FloatField(blank=True, null=True)
-  res_pris = models.FloatField(blank=True, null=True)
-  autre = models.FloatField(blank=True, null=True)
+  elec = models.FloatField(blank=True, null=True)
   temper = models.FloatField(blank=True, null=True)
   vecs = models.FloatField(blank=True, null=True)
-  elec = models.FloatField(blank=True, null=True)
   vef = models.FloatField(blank=True, null=True)
-  enr_prod = models.FloatField(blank=True, null=True)
 
   class Meta:
     unique_together = (('lot', 'day'),)
