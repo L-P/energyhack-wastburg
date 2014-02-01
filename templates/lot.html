@@ -7,8 +7,34 @@
   <li>Prix : {{ lot.price }} euros</li>
   <li>Pièces : {{ lot.rooms }}</li>
   <li>Surface : {{ lot.surface}} m2</li>
+  <li>Cout optimal : {{ lot.calc_mean_cost() }}</li>
 </ul>
 
+{% if season.diff > 25 %}
+<div class="alert alert-danger">
+  <h4>Temps froid</h4>
+  Les deux derniers mois ont été particulièrement froid.
+</div>
+{% endif %}
+{% if season.diff < -25 %}
+<div class="alert alert-success">
+  <h4>Temps chaud</h4>
+  Les deux derniers mois ont été particulièrement chaud.
+</div>
+
+{% endif %}
+<div class="panel panel-info">
+  <div class="panel-heading">
+    Données de Saison
+  </div>
+  <div class="panel-body">
+  <ul>
+  {% for k,v in season.items() %}
+    <li>{{k}} : {{v}}</li>
+  {% endfor %}
+  </ul>
+  </div>
+</div>
 
 <table class="table table-striped">
 <tr>
@@ -30,7 +56,7 @@
   {% if dju %}
   <td>{{ dju.dju }}</td>
   {% else %}
-  <td colspan="2">-</td>
+  <td>-</td>
   {% endif %}
   {% endwith %}
 </tr>
