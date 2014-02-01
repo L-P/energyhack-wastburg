@@ -94,7 +94,9 @@ USE_TZ = True
 
 # Energy Constants
 DJU_TO_KWH = 33.7
-KWH_TO_EUROS = 0.13
+
+# http://www.fournisseurs-electricite.com/comparatif-electricite/actu-electricite/1082-prix-dun-kwh-delectricite-en-france
+KWH_TO_EUROS = 0.1372
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/

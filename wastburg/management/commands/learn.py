@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from licence4.settings import KWH_TO_EUROS, DJU_TO_KWH
 from sklearn.externals import joblib
 from sklearn.svm import SVR
 from wastburg.models import EnergyDay, DjuDay
@@ -12,8 +13,6 @@ def is_float_empty(var):
     return not isinstance(var, float) or math.isnan(var)
 
 class Command(BaseCommand):
-    # http://www.fournisseurs-electricite.com/comparatif-electricite/actu-electricite/1082-prix-dun-kwh-delectricite-en-france
-    COST_KWH = 0.1372
 
     def handle(self, *args, **options):
         cost_clf, temp_clf = self.get_global_cost_temp_profile()
@@ -53,7 +52,7 @@ class Command(BaseCommand):
             except:
                 continue
 
-            cost = (eday.elec + (eday.lot.DJU_TO_KWH * dju)) * self.COST_KWH
+            cost = (eday.elec + (DJU_TO_KWH * dju)) * KWH_TO_EUROS
             doy = doy_from_date(eday.day)
             cost_data.append(np.array([
                 doy,
