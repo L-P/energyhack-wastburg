@@ -1,14 +1,9 @@
 from django.core.management.base import BaseCommand
 from matplotlib import pyplot
 from sklearn.svm import SVR
-from wastburg.models import EnergyDay
+from wastburg.models import EnergyDay, DjuDay, Lot
 import math
 import numpy as np
-
-DJU = [
-    407.0, 339.4, 273.1, 209.7, 104.0, 30.3,
-    14.3, 6.4, 57.6, 154.1, 307.4, 386.1
-]
 
 def is_float_empty(var):
     return not isinstance(var, float) or math.isnan(var)
@@ -30,7 +25,6 @@ class Command(BaseCommand):
         svr = clf.predict(data)
 
         pyplot.hold(True)
-        #pyplot.plot_date(time. data, '-', c="r", xdate=True, ydate=False, label="temp")
         pyplot.plot_date(time, target, '-', c="g", xdate=True, ydate=False, label="conso")
         pyplot.plot_date(time, svr, '-', c="b", xdate=True, ydate=False, label="SVR")
 
@@ -45,17 +39,23 @@ class Command(BaseCommand):
         data = []
         target = []
         time = []
-        for eday in EnergyDay.objects.filter(lot__name=lot_name):
+        lot = Lot.objects.get(name=lot_name)
+
+        for eday in EnergyDay.objects.filter(lot=lot):
             if is_float_empty(eday.temper) or is_float_empty(eday.elec):
                 continue
 
-            cost = (eday.elec * self.COST_KWH)
-            if(cost == 0):
+            dju = None
+            try:
+                dju = DjuDay.objects.get(day=eday.day).dju
+            except:
                 continue
 
+            cost = (eday.elec + (lot.DJU_TO_KWH * dju)) * self.COST_KWH
             data.append(np.array([
-                #float(eday.temper),
-                DJU[eday.day.month - 1]
+                eday.temper,
+                lot.surface,
+                dju
             ]))
             target.append(float(cost))
             time.append(eday.day)

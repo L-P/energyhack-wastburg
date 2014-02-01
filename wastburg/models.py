@@ -21,12 +21,10 @@ class Lot(models.Model):
   rooms = models.IntegerField()
   surface = models.FloatField()
   price = models.FloatField()
+  DJU_TO_KWH = 33.7
 
   def __unicode__(self):
     return '%s/%s' % (self.building, self.name)
-
-  def calc_my_dju(self, dju_base):
-    return 33.7 * dju_base * self.surface
 
 class EnergyDay(models.Model):
   lot = models.ForeignKey(Lot, related_name='days')

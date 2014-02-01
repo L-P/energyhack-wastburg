@@ -18,7 +18,6 @@
   <th>Eau froide</th>
   <th>Conso Elec.</th>
   <th>Dju</th>
-  <th>Dju du lot</th>
 </tr>
 {% for day in days %}
 <tr>
@@ -30,7 +29,6 @@
   {% with djus[day.day] as dju %}
   {% if dju %}
   <td>{{ dju.dju }}</td>
-  <td>{{ lot.calc_my_dju(dju.dju) }}</td>
   {% else %}
   <td colspan="2">-</td>
   {% endif %}
