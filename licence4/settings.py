@@ -14,6 +14,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = (BASE_DIR + '/templates',)
 
+# Load template trough jinja
+TEMPLATE_LOADERS = (
+  'licence4.jinja.Loader',
+  'django.template.loaders.filesystem.Loader',
+  'django.template.loaders.app_directories.Loader',
+)
+
+JINJA2_TEMPLATE_LOADERS = (
+  'django.template.loaders.filesystem.Loader',
+  'django.template.loaders.app_directories.Loader',
+)
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -31,6 +44,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'coffin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,4 +1,7 @@
+Coffin==0.3.8
 Django==1.6.1
+Jinja2==2.7.2
+MarkupSafe==0.18
 South==0.8.4
 argparse==1.2.1
 requests==2.2.1
