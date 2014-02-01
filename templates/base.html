@@ -26,6 +26,14 @@
           <div class="navbar-header">
             <a class="navbar-brand" href="{% url 'home' %}">Energy Hack</a>
           </div>
+        <ul class="nav nav-pills navbar-right">
+        {% if user.is_authenticated() %}
+          <li><a href="#"><span class="glyphicon glyphicon-home"></span> {{ user.username }}</a></li>
+          <li><a href="/logout"><span class="glyphicon glyphicon-remove-sign"></span> Se déconnecter</a></li>
+        {% else %}
+          <li><a href="/login">Se connecter</a></li>
+        {% endif %}
+        </ul>
         </div><!--/.container-fluid -->
       </div>
 

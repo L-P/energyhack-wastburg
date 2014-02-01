@@ -2,6 +2,7 @@ from django.db import models
 from licence4.settings import KWH_TO_EUROS, DJU_TO_KWH
 from datetime import timedelta
 from django.db.models import Avg, Sum
+from django.contrib.auth.models import User
 
 class Building(models.Model):
   name = models.CharField(max_length=50, unique=True)
@@ -24,6 +25,7 @@ class Lot(models.Model):
   rooms = models.IntegerField()
   surface = models.FloatField()
   price = models.FloatField()
+  owner = models.ForeignKey(User, null=True)
 
   def __unicode__(self):
     return '%s/%s' % (self.building, self.name)
