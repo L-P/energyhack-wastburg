@@ -1,4 +1,5 @@
 from django.views.generic import DetailView
+from datetime import date
 from wastburg.models import Lot, DjuDay
 
 class LotView(DetailView):
@@ -11,6 +12,7 @@ class LotView(DetailView):
     context = super(LotView, self).get_context_data(*args, **kwargs)
     context['days'] = self.object.days.order_by('day')
     context['djus'] = self.load_djus()
+    context['season'] = self.object.check_season(date.today())
     return context
 
   def load_djus(self):
@@ -18,5 +20,4 @@ class LotView(DetailView):
     out = {}
     for d in djus:
       out[d.day] = d
-    print out
     return out
