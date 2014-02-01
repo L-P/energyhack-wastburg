@@ -5,6 +5,11 @@ from wastburg.models import EnergyDay
 import math
 import numpy as np
 
+DJU = [
+    407.0, 339.4, 273.1, 209.7, 104.0, 30.3,
+    14.3, 6.4, 57.6, 154.1, 307.4, 386.1
+]
+
 def is_float_empty(var):
     return not isinstance(var, float) or math.isnan(var)
 
@@ -13,8 +18,9 @@ class Command(BaseCommand):
     COST_KWH = 0.1372
 
     def handle(self, *args, **options):
-        time, data, target = self.get_lot_training_set("A201")
-        self.plot(time, data, target, "A201")
+        lot = "A201"
+        time, data, target = self.get_lot_training_set(lot)
+        self.plot(time, data, target, lot)
 
 
     def plot(self, time, data, target, title):
@@ -24,7 +30,7 @@ class Command(BaseCommand):
         svr = clf.predict(data)
 
         pyplot.hold(True)
-        pyplot.plot_date(time, data, '-', c="r", xdate=True, ydate=False, label="temp")
+        #pyplot.plot_date(time. data, '-', c="r", xdate=True, ydate=False, label="temp")
         pyplot.plot_date(time, target, '-', c="g", xdate=True, ydate=False, label="conso")
         pyplot.plot_date(time, svr, '-', c="b", xdate=True, ydate=False, label="SVR")
 
@@ -47,7 +53,10 @@ class Command(BaseCommand):
             if(cost == 0):
                 continue
 
-            data.append(np.array([float(eday.temper)]))
+            data.append(np.array([
+                #float(eday.temper),
+                DJU[eday.day.month - 1]
+            ]))
             target.append(float(cost))
             time.append(eday.day)
 
