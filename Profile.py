@@ -14,9 +14,9 @@ class Profile:
         self.dju  = joblib.load("data/dju/dump")
 
 
-    def get_goal(self, surface):
+    def get_goal(self, surface, dates):
         """Return the spending goal for the current year."""
-        return sum(self.get_daily_goals(surface))
+        return sum([v for d,v in self.get_daily_goals(surface, dates)])
 
 
     def get_bullshit_heat_spendings(self, surface, mu, sigma):
@@ -25,14 +25,14 @@ class Profile:
         return map((lambda x,y: x+y), noise, heat)
 
 
-    def get_daily_goals(self, surface):
+    def get_daily_goals(self, surface, dates):
         """
         Return a list of amounts, one per day, of average spending.
         @return float[] in euro
         """
-        iterator = DjuDay.objects.filter(day__year=2013).values("average")
+        iterator = DjuDay.objects.filter(day__in=dates).order_by('day')
         return [
-            x["average"] * DJU_TO_KWH * KWH_TO_EUROS * surface / 1000 for x in iterator
+            [x.day, x.average * DJU_TO_KWH * KWH_TO_EUROS * surface / 1000] for x in iterator
         ]
 
 
