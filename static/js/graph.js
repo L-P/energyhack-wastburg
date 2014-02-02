@@ -14,6 +14,12 @@ function energy_flot(url){
       min : 0,
       max : 1000,
     },
+    zoom: {
+      interactive: true
+    },
+    pan: {
+      interactive: true
+    }
   };
 
   $.ajax({
