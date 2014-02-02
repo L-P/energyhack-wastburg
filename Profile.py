@@ -36,7 +36,7 @@ class Profile:
         """
         iterator = DjuDay.objects.filter(day__in=dates).order_by('day')
         return [
-            [x.day, x.average * DJU_TO_KWH * KWH_TO_EUROS * surface / 1000] for x in iterator
+            [x.day, x.average * DJU_TO_KWH * KWH_TO_EUROS * surface] for x in iterator
         ]
 
 

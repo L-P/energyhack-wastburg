@@ -32,7 +32,7 @@ class Lot(models.Model):
 
   def calc_mean_cost(self):
     dju_total = sum([d.dju for d in DjuDay.objects.filter(day__year=2013)])
-    return dju_total * DJU_TO_KWH * self.surface * KWH_TO_EUROS / 1000.0
+    return dju_total * DJU_TO_KWH * self.surface * KWH_TO_EUROS
 
   def check_season(self, day, days_before=60):
     '''

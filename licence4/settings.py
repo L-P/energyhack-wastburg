@@ -93,7 +93,7 @@ USE_L10N = True
 USE_TZ = True
 
 # Energy Constants
-DJU_TO_KWH = 33.7
+DJU_TO_KWH = 33.7 / 1000.0
 
 # http://www.fournisseurs-electricite.com/comparatif-electricite/actu-electricite/1082-prix-dun-kwh-delectricite-en-france
 KWH_TO_EUROS = 0.1372
