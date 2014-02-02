@@ -19,10 +19,14 @@ class Profile:
         return sum([v for d,v in self.get_daily_goals(surface, dates)])
 
 
-    def get_bullshit_heat_spendings(self, surface, mu, sigma):
-        heat = self.get_daily_goals(surface)
+    def get_bullshit_heat_spendings(self, surface, dates, mu, sigma):
+        heat = self.get_daily_goals(surface, dates)
         noise = np.random.normal(mu, sigma, len(heat))
-        return map((lambda x,y: x+y), noise, heat)
+        out = []
+        for i,combo in enumerate(heat):
+          day,heat=combo
+          out.append([day, heat+noise[i]])
+        return out
 
 
     def get_daily_goals(self, surface, dates):

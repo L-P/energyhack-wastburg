@@ -11,13 +11,13 @@
 </div>
 
 {% if season.diff > 25 %}
-<div class="alert alert-danger">
+<div class="alert alert-success">
   <h4>Temps froid</h4>
   Les deux derniers mois ont été particulièrement froid.
 </div>
 {% endif %}
 {% if season.diff < -25 %}
-<div class="alert alert-success">
+<div class="alert alert-danger">
   <h4>Temps chaud</h4>
   Les deux derniers mois ont été particulièrement chaud.
 </div>

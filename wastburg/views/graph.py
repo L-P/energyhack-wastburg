@@ -13,8 +13,16 @@ class GraphDataView(DetailView):
       raise Http404('No user')
     return Lot.objects.get(owner=self.request.user)
 
+  def add_dataset(self, name, dataset):
+    self.data.append({
+      'label' : name,
+      'data' : [[int(d.strftime('%s')) * 1000, v]  for d,v in dataset],
+    })
+
   def render_to_response(self, context, *args, **kwargs):
-    data = []
+    self.data = []
+
+    full = False
 
     # Date Interval
     start = date(2013, 6, 15)
@@ -23,39 +31,31 @@ class GraphDataView(DetailView):
     # Add energy
     edays = EnergyDay.objects.filter(lot=self.object, day__gte=start, day__lte=end).order_by('day')
     dates = [d.day for d in edays] # limiting days
-    data_edays = {
-      'label' : 'Elec',
-      'data' : [[int(d.day.strftime('%s')) * 1000, (d.elec or 0.0) * KWH_TO_EUROS] for d in edays],
-    }
-    data.append(data_edays)
+    if full:
+      self.add_dataset('Energy', [[d.day, (d.elec or 0.0) * KWH_TO_EUROS] for d in edays])
 
     # Get all djudays
     days = DjuDay.objects.filter(day__in=dates)
-    data_djus = {
-      'data' : [[int(d.day.strftime('%s')) * 1000, d.diff] for d in days],
-      'label' : 'DJU',
-    }
-    data.append(data_djus)
+    if full:
+      self.add_dataset('DJU', [[d.day, d.diff] for d in days])
 
+    # Build profile
     p = Profile()
     goal = p.get_goal(self.object.surface, dates)
     goal_daily = p.get_daily_goals(self.object.surface, dates)
 
     # Add goal
-    goals = {
-      'data' : [[int(d.strftime('%s'))*1000, v] for d,v in goal_daily],
-      'label' : 'Goal',
-    }
-    data.append(goals)
+    if full:
+      self.add_dataset('Goals', goal_daily)
+
+    # Add heat
+    heat = p.get_bullshit_heat_spendings(self.object.surface, dates, .3, .3)
+    if full:
+      self.add_dataset('Heat', heat)
 
     # Add diff
-    '''
-    heat = p.get_bullshit_heat_spendings(lot.surface, .3, .3)
-    diff = map((lambda x,y: goal + x-y[1]), heat, goal_daily)
-    diffs = {
-      'data' : [[int(d.strftime('%s'))*1000, v] for d,v in goal_daily],
-      'label' : 'Diff',
-    }
-    data.append(diffs)
-    '''
-    return HttpResponse(json.dumps(data, sort_keys=True, indent=2), 'application/json')
+    diff = map((lambda x,y: [x[0], goal + x[1]-y[1]]), heat, goal_daily)
+    if not full:
+      self.add_dataset('Diff', diff)
+
+    return HttpResponse(json.dumps(self.data, sort_keys=True, indent=2), 'application/json')
