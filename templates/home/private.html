@@ -21,63 +21,16 @@
   <h4>Temps chaud</h4>
   Les deux derniers mois ont été particulièrement chaud.
 </div>
-
 {% endif %}
-
 
 <div class="demo-container">
   <div id="placeholder" class="demo-placeholder"></div>
 </div>
 
-
 <script type="text/javascript">
-//energy_graph("{% url 'graph-data' %}");
 $(function(){
   energy_flot("{% url 'graph-data' %}");
 });
 </script>
-
-{#
-<div class="panel panel-info">
-  <div class="panel-heading">
-    Données de Saison
-  </div>
-  <div class="panel-body">
-  <ul>
-  {% for k,v in season.items() %}
-    <li>{{k}} : {{v}}</li>
-  {% endfor %}
-  </ul>
-  </div>
-</div>
-
-<table class="table table-striped">
-<tr>
-  <th>Date</th>
-  <th>Température</th>
-  <th>Eau chaude</th>
-  <th>Eau froide</th>
-  <th>Conso Elec.</th>
-  <th>Dju</th>
-</tr>
-{% for day in days %}
-<tr>
-  <td>{{ day.day|default('') }}</td>
-  <td>{{ day.temper|default('')}}</td>
-  <td>{{ day.vecs|default('') }}</td>
-  <td>{{ day.vef|default('') }}</td>
-  <td>{{ day.elec|default('') }}</td>
-  {% with djus[day.day] as dju %}
-  {% if dju %}
-  <td>{{ dju.dju }}</td>
-  {% else %}
-  <td>-</td>
-  {% endif %}
-  {% endwith %}
-</tr>
-{% endfor %}
-</table>
-
-#}
 
 {% endblock %}
