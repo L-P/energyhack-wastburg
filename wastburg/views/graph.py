@@ -8,7 +8,7 @@ from licence4.settings import KWH_TO_EUROS
 from datetime import timedelta
 
 class GraphDataView(DetailView):
-  prediction_days = 120
+  prediction_days = 240
 
   def get_object(self):
     if not self.request.user.is_authenticated():
@@ -62,17 +62,18 @@ class GraphDataView(DetailView):
 
     # Add diff
     diff = map((lambda x,y: [x[0], goal + x[1]-y[1]]), heat, goal_daily)
-    self.add_dataset('Diff', diff)
+    doys = [d.timetuple().tm_yday for d in dates]
+    predictions = p.predict_costs(doys, self.object.surface)
+    dataset = [[dates[i], goal + predictions[i]] for i,doy in enumerate(doys)]
+    self.add_dataset('Diff', dataset)
 
     # Add predictions
     end -= timedelta(days=2)
     prediction_dates = [end + timedelta(days=i) for i in range(0, self.prediction_days)]
-    bs_start = 170
-    doys = range(bs_start, bs_start+self.prediction_days)
-    #doys = [d.timetuple().tm_yday for d in prediction_dates]
+    doys = [d.timetuple().tm_yday for d in prediction_dates]
 
     predictions = p.predict_costs(doys, self.object.surface)
-    dataset = [[prediction_dates[i], goal + predictions[i] / 10.0] for i,doy in enumerate(doys)]
+    dataset = [[prediction_dates[i], goal + predictions[i]] for i,doy in enumerate(doys)]
     self.add_dataset('Predictions', dataset, color='#F00', dashes=True)
 
     # Add straight line to static goal
