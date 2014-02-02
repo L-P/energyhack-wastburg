@@ -5,24 +5,29 @@ from Profile import Profile
 from datetime import date
 from wastburg.models import *
 from licence4.settings import KWH_TO_EUROS
+from datetime import timedelta
 
 class GraphDataView(DetailView):
+  prediction_days = 120
 
   def get_object(self):
     if not self.request.user.is_authenticated():
       raise Http404('No user')
     return Lot.objects.get(owner=self.request.user)
 
-  def add_dataset(self, name, dataset):
-    self.data.append({
+  def add_dataset(self, name, dataset, color=None, dashes=False):
+    data = {
       'label' : name,
       'data' : [[int(d.strftime('%s')) * 1000, v]  for d,v in dataset],
-    })
+    }
+    if color:
+      data['color'] = color
+    self.data.append(data)
 
   def render_to_response(self, context, *args, **kwargs):
     self.data = []
 
-    full = False
+    full = True
 
     # Date Interval
     start = date(2013, 6, 15)
@@ -53,9 +58,24 @@ class GraphDataView(DetailView):
     if full:
       self.add_dataset('Heat', heat)
 
+    self.data = []
+
     # Add diff
     diff = map((lambda x,y: [x[0], goal + x[1]-y[1]]), heat, goal_daily)
-    if not full:
-      self.add_dataset('Diff', diff)
+    self.add_dataset('Diff', diff)
+
+    # Add predictions
+    end -= timedelta(days=2)
+    prediction_dates = [end + timedelta(days=i) for i in range(0, self.prediction_days)]
+    bs_start = 170
+    doys = range(bs_start, bs_start+self.prediction_days)
+    #doys = [d.timetuple().tm_yday for d in prediction_dates]
+
+    predictions = p.predict_costs(doys, self.object.surface)
+    dataset = [[prediction_dates[i], goal + predictions[i] / 10.0] for i,doy in enumerate(doys)]
+    self.add_dataset('Predictions', dataset, color='#F00', dashes=True)
+
+    # Add straight line to static goal
+    self.add_dataset('But', [[d, goal] for d in dates + prediction_dates])
 
     return HttpResponse(json.dumps(self.data, sort_keys=True, indent=2), 'application/json')
