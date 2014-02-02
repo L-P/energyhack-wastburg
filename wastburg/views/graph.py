@@ -27,18 +27,16 @@ class GraphDataView(DetailView):
     edays = EnergyDay.objects.filter(lot=self.object, day__gte=start, day__lte=end).order_by('day')
     dates = [d.day for d in edays] # limiting days
     data_edays = {
-      'color': 'red',
-      'name' : 'Elec',
-      'data' : [{'x' : int(d.day.strftime('%s')), 'y' : (d.elec or 0.0) * KWH_TO_EUROS } for d in edays],
+      'label' : 'Elec',
+      'data' : [[int(d.day.strftime('%s')) * 1000, (d.elec or 0.0) * KWH_TO_EUROS] for d in edays],
     }
     data.append(data_edays)
 
     # Get all djudays
     days = DjuDay.objects.filter(day__in=dates)
     data_djus = {
-      'color' : 'blue',
-      'data' : [{'x' : int(d.day.strftime('%s')), 'y' : d.diff,} for d in days],
-      'name' : 'Djus',
+      'data' : [[int(d.day.strftime('%s')) * 1000, d.diff] for d in days],
+      'label' : 'DJU',
     }
     data.append(data_djus)
 
