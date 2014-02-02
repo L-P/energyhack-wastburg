@@ -22,12 +22,15 @@ class GraphDataView(DetailView):
     }
     if color:
       data['color'] = color
-    self.data.append(data)
+    self.data['sets'].append(data)
 
   def render_to_response(self, context, *args, **kwargs):
-    self.data = []
+    self.data = {
+      'sets' : [],
+      'yscale' : {},
+    }
 
-    full = True
+    full = False
 
     # Date Interval
     start = date(2013, 6, 15)
@@ -53,12 +56,16 @@ class GraphDataView(DetailView):
     if full:
       self.add_dataset('Goals', goal_daily)
 
+    # Add scale
+    self.data['yscale'] = {
+      'min' : goal-goal*0.01,
+      'max' : goal+goal*0.01,
+    }
+
     # Add heat
     heat = p.get_bullshit_heat_spendings(self.object.surface, dates, .3, .3)
-    if full:
-      self.add_dataset('Heat', heat)
+    #self.add_dataset('Heat', [[d,h+goal] for d,h in heat])
 
-    self.data = []
 
     # Add diff
     diff = map((lambda x,y: [x[0], goal + x[1]-y[1]]), heat, goal_daily)
@@ -75,6 +82,7 @@ class GraphDataView(DetailView):
     predictions = p.predict_costs(doys, self.object.surface)
     dataset = [[prediction_dates[i], goal + predictions[i]] for i,doy in enumerate(doys)]
     self.add_dataset('Predictions', dataset, color='#F00', dashes=True)
+
 
     # Add straight line to static goal
     self.add_dataset('But', [[d, goal] for d in dates + prediction_dates])

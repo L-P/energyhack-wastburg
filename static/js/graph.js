@@ -9,7 +9,11 @@ function energy_flot(url){
     },
     "lines": {"show": "true"},
     clickable:true,
-    hoverable: true
+    hoverable: true,
+    yaxis : {
+      min : 0,
+      max : 1000,
+    },
   };
 
   $.ajax({
@@ -17,7 +21,10 @@ function energy_flot(url){
     type: "GET",
     dataType: "json",
     success: function(data){
-      $.plot("#placeholder", data, options);
+      options.yaxis.min = data.yscale.min;
+      options.yaxis.max= data.yscale.max;
+      console.log(options);
+      $.plot("#placeholder", data.sets, options);
     }
   });
 
