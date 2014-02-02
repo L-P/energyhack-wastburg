@@ -47,3 +47,26 @@ ul.nav li.user {
   border-top-right-radius: 0;
 }
 
+/* Graph */
+svg {
+  height: 1000px;
+}
+#chart {
+  display: inline-block;
+}
+#legend {
+  display: inline-block;
+  position: relative;
+  left: 8px;
+}
+#legend_container {
+  position: absolute;
+  right: 0;
+  bottom: 26px;
+  width: 0;
+}
+#chart_container {
+  float: left;
+  position: relative;
+}
+

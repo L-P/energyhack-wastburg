@@ -1,23 +1,41 @@
 function energy_graph(url){
-  var ajaxGraph = new Rickshaw.Graph.Ajax( {
+  var time = new Rickshaw.Fixtures.Time();
+  var days = time.unit('month');
 
-    element: document.getElementById("graph"),
-    width: 400,
-    height: 200,
+  var graph = new Rickshaw.Graph.Ajax( {
+    element: document.getElementById('graph'),
     renderer: 'line',
+    stroke : true,
     dataURL: url,
-    onData: function(d) { d[0].data[0].y = 80; return d },
-    series: [
-      {
-        name: 'New York',
-        color: '#c05020',
-      }, {
-        name: 'London',
-        color: '#30c020',
-      }, {
-        name: 'Tokyo',
-        color: '#6060c0'
-      }
-    ]
+    onData: function(d) {
+      Rickshaw.Series.zeroFill(d);
+      return d;
+    },
   } );
+
+  new Rickshaw.Graph.Axis.Time({
+    graph: graph
+  });
+
+
+  var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+    graph: graph
+  } );
+
+  var legend = new Rickshaw.Graph.Legend( {
+    graph: graph,
+    element: document.getElementById('legend')
+  } );
+
+  var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+    graph: graph,
+    legend: legend
+  } );
+
+  var axes = new Rickshaw.Graph.Axis.Time( {
+    graph: graph
+  } );
+  axes.render();
+
+  graph.render();
 }

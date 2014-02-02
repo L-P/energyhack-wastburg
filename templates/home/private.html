@@ -2,18 +2,13 @@
 
 {% block content %}
 
-<div id="graph"> </div>
-<script type="text/javascript">
-energy_graph("{% url 'graph-data' %}");
-</script>
 
-<ul>
-  <li>Etage : {{ lot.floor.floor }}</li>
-  <li>Prix : {{ lot.price }} euros</li>
-  <li>Pièces : {{ lot.rooms }}</li>
-  <li>Surface : {{ lot.surface}} m2</li>
-  <li>Cout optimal : {{ lot.calc_mean_cost() }}</li>
-</ul>
+<div style="margin: 5px 0 20px 0;">
+  <span class="label label-default">Etage {{ lot.floor.floor }}</span>
+  <span class="label label-warning">{{ lot.price|floatformat(0) }} &euro;</span>
+  <span class="label label-success">{{ lot.rooms }} pièces</span>
+  <span class="label label-info">{{ lot.surface }} m2</span>
+</div>
 
 {% if season.diff > 25 %}
 <div class="alert alert-danger">
@@ -28,6 +23,18 @@ energy_graph("{% url 'graph-data' %}");
 </div>
 
 {% endif %}
+
+<div id="chart_container" style="width: 100%;">
+  <div id="y_axis"> </div>
+  <div id="graph"> </div>
+  <div id="x_axis"> </div>
+  <div id="legend"> </div>
+</div>
+<script type="text/javascript">
+energy_graph("{% url 'graph-data' %}");
+</script>
+
+{#
 <div class="panel panel-info">
   <div class="panel-heading">
     Données de Saison
@@ -67,5 +74,7 @@ energy_graph("{% url 'graph-data' %}");
 </tr>
 {% endfor %}
 </table>
+
+#}
 
 {% endblock %}
