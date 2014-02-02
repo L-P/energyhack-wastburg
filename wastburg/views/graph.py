@@ -8,7 +8,7 @@ from licence4.settings import KWH_TO_EUROS
 from datetime import timedelta
 
 class GraphDataView(DetailView):
-  prediction_days = 240
+  prediction_days = 120
 
   def get_object(self):
     if not self.request.user.is_authenticated():
@@ -85,6 +85,6 @@ class GraphDataView(DetailView):
 
 
     # Add straight line to static goal
-    self.add_dataset('But', [[d, goal] for d in dates + prediction_dates])
+    self.add_dataset('But', [[d, goal+0.001*goal] for d in dates + prediction_dates])
 
     return HttpResponse(json.dumps(self.data, sort_keys=True, indent=2), 'application/json')
