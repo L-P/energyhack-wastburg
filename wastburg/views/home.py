@@ -1,6 +1,7 @@
 from django.views.generic import DetailView
 from wastburg.models import Building, Lot, DjuDay
 from datetime import date
+from django.http import HttpResponseRedirect
 
 class HomeView(DetailView):
   context_object_name = 'lot'
@@ -10,9 +11,7 @@ class HomeView(DetailView):
 
     # Minimal page for public
     if not self.request.user.is_authenticated():
-      self.object = None
-      self.template_name = 'home/public.html'
-      return self.render_to_response({})
+      return HttpResponseRedirect('/login')
 
     return super(HomeView, self).get(*args, **kwargs)
 

@@ -17,6 +17,10 @@ ul.nav li.user {
   padding: 15px;
   margin: 0 auto;
 }
+#form-signin .accounts {
+  text-align: center;
+  margin-top: 70px;
+}
 #form-signin #form-signin-heading,
 #form-signin .checkbox {
   margin-bottom: 10px;

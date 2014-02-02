@@ -9,12 +9,31 @@
 </div>
 {% endif %}
 
-<form id="form-signin" role="form" method="post">
+<form id="form-signin" role="form" method="post" id="form_login" action="/login">
   <h2 class="form-signin-heading">Authentifiez vous...</h2>
   {% csrf_token %}
-  <input type="text" name="username" class="form-control" placeholder="Login" autofocus />
-  <input type="password" name="password" class="form-control" placeholder="Mot de passe" />
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  <input id="username" type="text" name="username" class="form-control" placeholder="Login" autofocus />
+  <input id="password" type="password" name="password" class="form-control" placeholder="Mot de passe" />
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
+
+  <div class="accounts">
+    <p>Comptes démo EnergyHack:</p>
+    <button class="btn btn-success">A211</button>
+    <button class="btn btn-danger">B103</button>
+    <button class="btn btn-info">B122</button>
+  </div>
 </form>
+
+<script type="text/javascript">
+$(function(){
+  $('div.accounts button').click(function(){
+    var lot = $(this).text();
+    $('#username').val(lot);
+    $('#password').val(lot);
+    console.log($('#form_login'));
+    $('#form_login').submit();
+  });
+});
+</script>
 
 {% endblock %}
