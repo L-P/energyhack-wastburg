@@ -53,8 +53,7 @@ class GraphDataView(DetailView):
     goal_daily = p.get_daily_goals(self.object.surface, dates)
 
     # Add goal
-    if full:
-      self.add_dataset('Goals', goal_daily)
+    #self.add_dataset('Goals', goal_daily)
 
     # Add scale
     self.data['yscale'] = {
@@ -63,16 +62,20 @@ class GraphDataView(DetailView):
     }
 
     # Add heat
+    tweak = self.object.name == 'B122' and -1 or 1
     heat = p.get_bullshit_heat_spendings(self.object.surface, dates, .3, .3)
-    #self.add_dataset('Heat', [[d,h+goal] for d,h in heat])
+    heat_set = [[d,tweak*h*0.5 + goal] for d,h in heat]
+    self.add_dataset('Conso', heat_set)
 
+    # Get last heat
+    lastheat = heat_set[len(heat_set)-1][1] - 0.0015*goal
 
-    # Add diff
+    # Add BS diff
     diff = map((lambda x,y: [x[0], goal + x[1]-y[1]]), heat, goal_daily)
     doys = [d.timetuple().tm_yday for d in dates]
     predictions = p.predict_costs(doys, self.object.surface)
     dataset = [[dates[i], goal + predictions[i]] for i,doy in enumerate(doys)]
-    self.add_dataset('Diff', dataset)
+    #self.add_dataset('Diff', dataset)
 
     # Add predictions
     end -= timedelta(days=2)
@@ -80,7 +83,7 @@ class GraphDataView(DetailView):
     doys = [d.timetuple().tm_yday for d in prediction_dates]
 
     predictions = p.predict_costs(doys, self.object.surface)
-    dataset = [[prediction_dates[i], goal + predictions[i]] for i,doy in enumerate(doys)]
+    dataset = [[prediction_dates[i], lastheat + predictions[i]] for i,doy in enumerate(doys)]
     self.add_dataset('Predictions', dataset, color='#F00', dashes=True)
 
 
